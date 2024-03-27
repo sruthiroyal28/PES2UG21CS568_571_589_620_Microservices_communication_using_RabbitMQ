@@ -23,13 +23,26 @@ async function pub(exchange, routingKey, message) {
 
     console.log(`Message published to exchange "${exchange}" with routing key "${routingKey}"`);
   } catch(error){
-      console.error(error.message);
+      res.error(error.message);
   }
 }
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
-})
+});
+
+
+app.get('/healthcheck', async (req, res) => {
+  try{
+    const healthCheckMessage = { status: "OK"};
+
+    await publish('health', 'healthcheck', healthCheckMessage);
+
+    res.send('HealthCheck message published successfully');
+  } catch(error){
+    res.error(error.message);
+  }
+});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
