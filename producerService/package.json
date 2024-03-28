@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/sruthiroyal28/PES2UG21CS568_PES2UG21CS571_PES2UG21CS589_PES2UG21CS620_Microservices-_communication_using_RabbitMQ/issues"
   },
-  "homepage": "https://github.com/sruthiroyal28/PES2UG21CS568_PES2UG21CS571_PES2UG21CS589_PES2UG21CS620_Microservices-_communication_using_RabbitMQ#readme"
+  "homepage": "https://github.com/sruthiroyal28/PES2UG21CS568_PES2UG21CS571_PES2UG21CS589_PES2UG21CS620_Microservices-_communication_using_RabbitMQ#readme",
+  "dependencies": {
+    "amqplib": "^0.10.3"
+  }
 }
