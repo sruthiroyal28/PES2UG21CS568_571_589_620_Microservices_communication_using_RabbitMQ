@@ -24,3 +24,12 @@ CREATE TABLE orders (
     total_amount DECIMAL(10, 2) NOT NULL,
    
 );
+
+CREATE TABLE order_item (
+    order_item_id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    item_id INT NOT NULL,
+    quantity INT NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id),
+    FOREIGN KEY (item_id) REFERENCES item(item_id)
+);
