@@ -1,15 +1,45 @@
 const express = require('express')
 const app = express()
-const port = 3000
-// var amqp = require('amqplib/callback_api');
-
-// amqp.connect('amqp://localhost', function(error0, connection) {});
-
+const port = 3001
+const amqp = require('amqplib');
+const RMQ_URL = 'amqp://localhost:5672/';
 
 
-app.get('/healthcheck', (req, res) => {
-  res.json({"Health": "ok"})
+async function consumeMessage(exchange, routingKey){
+  try{
+    // Connect to rabbitMQ server and retirieve the message 
+    const con = await amqp.connect(RMQ_URL);
+    const channel = await con.createChannel();
+
+    await channel.assertExchange(exchange, 'topic', { durable: false });
+    
+    const { queue } = await channel.assertQueue('', { exclusive: true });
+
+    await channel.bindQueue(queue, exchange, routingKey);
+
+    console.log(`Waiting for messages from exchange "${exchange}" with routing key "${routingKey}"...`);
+
+    channel.consume(queue, (msg) => {
+      if (msg) {
+        const messageContent = msg.content.toString();
+        console.log('Received message:', messageContent);
+        channel.ack(msg);
+      }
+    });
+  } catch(error){
+    console.error('Error: ', error.message);
+  }
+}
+
+app.get('/consumer1', (req, res) => {
+  consumeMessage('health', '');
+  res.json("Consumer1 started consuming messages");
 })
+
+// app.get('/itemcreation', (req, res) => {
+//   consumeMessage('create', '');
+//   res.json("Consumer2 started consuming messages");
+// })
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)

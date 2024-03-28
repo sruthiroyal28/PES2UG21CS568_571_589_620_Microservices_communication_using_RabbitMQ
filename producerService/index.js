@@ -33,9 +33,9 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 });
 
-app.get('/healthcheck', async (req, res) => {
+app.get('/consumer1', async (req, res) => {
   try{
-    const healthCheckMessage = { status: "OK"};
+    const healthCheckMessage = { status: "Perform Healthcheck"};
 
     await pub("health", '', healthCheckMessage);
 
@@ -45,11 +45,35 @@ app.get('/healthcheck', async (req, res) => {
   }
 });
 
-app.get('/itemcreation', async (req, res) => {
-  const { data } = req.body;
+app.get('/consumer2', async (req, res) => {
   try{
+    const data = req.body;
     console.log(data);
-    await pub('create', 'itemcreate', data);
+    await pub('create', '', data);
+
+    res.send('Item data published successfully')
+  } catch(error){
+    res.send(error.message);
+  }
+})
+
+app.get('/consumer3', async (req, res) => {
+  try{
+    const data = req.body;
+    console.log(data);
+    await pub('delete', '', data);
+
+    res.send('Item data published successfully')
+  } catch(error){
+    res.send(error.message);
+  }
+})
+
+app.get('/consumer4', async (req, res) => {
+  try{
+    const data = req.body;
+    console.log(data);
+    await pub('read', '', data);
 
     res.send('Item data published successfully')
   } catch(error){
