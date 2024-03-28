@@ -7,7 +7,6 @@ const RMQ_URL = 'amqp://localhost:5672/';
 
 app.use(bodyParser.json());
 
-
 async function pub(exchange, routingKey, message) {
   try{
     // Todo: Connect to rabbitMQ server and publish message.
@@ -33,9 +32,10 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 });
 
-app.get('/consumer1', async (req, res) => {
+app.post('/consumer1', async (req, res) => {
   try{
-    const healthCheckMessage = { status: "Perform Healthcheck"};
+    console.log("hi");
+    const healthCheckMessage = { "status": "ok" };
 
     await pub("health", '', healthCheckMessage);
 
@@ -45,7 +45,7 @@ app.get('/consumer1', async (req, res) => {
   }
 });
 
-app.get('/consumer2', async (req, res) => {
+app.post('/consumer2', async (req, res) => {
   try{
     const data = req.body;
     console.log(data);
@@ -57,7 +57,7 @@ app.get('/consumer2', async (req, res) => {
   }
 })
 
-app.get('/consumer3', async (req, res) => {
+app.post('/consumer3', async (req, res) => {
   try{
     const data = req.body;
     console.log(data);
@@ -69,7 +69,7 @@ app.get('/consumer3', async (req, res) => {
   }
 })
 
-app.get('/consumer4', async (req, res) => {
+app.post('/consumer4', async (req, res) => {
   try{
     const data = req.body;
     console.log(data);
