@@ -3,7 +3,7 @@ const app = express();
 const port = 3000;
 const amqp = require('amqplib');
 const bodyParser = require('body-parser');
-const RMQ_URL = '...';
+const RMQ_URL = 'amqp://localhost:5672/';
 
 app.use(bodyParser.json());
 
@@ -16,7 +16,7 @@ async function pub(exchange, routingKey, message) {
 
     await channel.assertExchange(exchange, 'topic', { durable: flase });
 
-    await channe;.publish(exchange, routingKey, Buffer.from(JSON.stringify(message)));
+    await channel.publish(exchange, routingKey, Buffer.from(JSON.stringify(message)));
     
     await channel.close();
     await con.close();
@@ -36,7 +36,7 @@ app.get('/healthcheck', async (req, res) => {
   try{
     const healthCheckMessage = { status: "OK"};
 
-    await publish('health', 'healthcheck', healthCheckMessage);
+    await pub('health', 'healthcheck', healthCheckMessage);
 
     res.send('HealthCheck message published successfully');
   } catch(error){
