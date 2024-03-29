@@ -42,7 +42,7 @@ def main():
 
 app = Flask(__name__)
 
-@app.route('/consumer2')
+@app.route('/consumer2', methods=['POST'])
 def consumer2():
     exchange = 'create'
     routing_key = ''
