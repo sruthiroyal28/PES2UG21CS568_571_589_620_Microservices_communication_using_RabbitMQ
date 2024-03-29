@@ -1,54 +1,63 @@
-import json
-import asyncio
-from flask import Flask, jsonify
 import pika
+import logging
+import flask
 
-RMQ_URL = 'amqp://localhost:5672/'
+# Configure logging
+logging.basicConfig(level=logging.INFO)
 
-def consume_message(exchange, routing_key):
-    try:
-        connection = pika.BlockingConnection(pika.ConnectionParameters(RMQ_URL))
-        channel = connection.channel()
+# Replace with your RabbitMQ URL
+amqp_url = "amqp://localhost:5672/"
 
-        channel.exchange_declare(exchange='create', exchange_type='topic')
 
-        result = channel.queue_declare('', exclusive=True)
+class ExampleConsumer(object):
+    EXCHANGE = "create"
+    EXCHANGE_TYPE = 'topic'
+    QUEUE = "consumer2_queue"  # Define your queue name here
+    ROUTING_KEY = "item.created"  # Define your routing key here
+
+    def __init__(self):
+        self.connection = None
+        self.channel = None
+
+    def connect(self):
+        logging.info("Connecting to RabbitMQ...")
+        self.connection = pika.BlockingConnection(pika.URLParameters(amqp_url))
+        self.channel = self.connection.channel()
+        self.channel.exchange_declare(exchange=self.EXCHANGE, exchange_type=self.EXCHANGE_TYPE)
+        result = self.channel.queue_declare(queue=self.QUEUE, exclusive=False)
         queue_name = result.method.queue
+        self.channel.queue_bind(exchange=self.EXCHANGE, routing_key=self.ROUTING_KEY, queue=queue_name)
+        self.channel.basic_consume(queue=queue_name, on_message_callback=self.on_message)
 
-        channel.queue_bind(exchange=exchange, queue=queue_name, routing_key=routing_key)
+    def on_message(self, channel, method, header, body):
+        logging.info(f"Received message: {body.decode()}")
+        # Process the message here (e.g., save it to a database)
+        channel.basic_ack(delivery_tag=method.delivery_tag)
 
-        print(f'Waiting for messages from exchange "{exchange}" with routing key "{routing_key}"...')
+    def start_consuming(self):
+        logging.info("Starting to consume messages...")
+        self.connect()
+        self.channel.start_consuming()
 
-        def callback(ch, method, properties, body):
-            print(f"Received message: {body.decode()}")
-            ch.basic_ack(delivery_tag=method.delivery_tag)
+    def stop_consuming(self):
+        if self.channel:
+            self.channel.stop_consuming()
+        if self.connection:
+            self.connection.close()
 
-            # Inserting into database
 
-        channel.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=False)
+app = flask.Flask(__name__)
 
-        connection.ioloop.start()
-
-    except Exception as error:
-        print(f"Error: {error}")
-
-def start_consumer2(exchange, routing_key):
-    consume_message(exchange, routing_key)
-
-def main():
-    exchange = 'create'
-    routing_key = ''
-    start_consumer2(exchange, routing_key)
-
-app = Flask(__name__)
 
 @app.route('/consumer2', methods=['POST'])
-def consumer2():
-    exchange = 'create'
-    routing_key = ''
-    consume_message(exchange, routing_key)
-    return jsonify({'status': 'Consumer 2 started consuming messages'})
+def handle_message():
+    # Add logic here to handle incoming POST requests
+    # You can potentially access the message body from the request
+    # and use the consumer object to do something with it (e.g., acknowledge)
+    return "Message received", 200
 
-if __name__ == '__main__':
-    main()
-    app.run(port=3002)
+
+if __name__ == "__main__":
+    consumer = ExampleConsumer()
+    consumer.start_consuming()
+    app.run(debug=True, port=5002)  # Run the Flask app in debug mode
