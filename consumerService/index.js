@@ -37,11 +37,9 @@ async function consumeMessage(exchange, routingKey){
 //
 
 
-// app.get('/itemcreation', (req, res) => {
-//   consumeMessage('create', '');
-//   res.json("Consumer2 started consuming messages");
-// })
-consumeMessage('create', '');
+consumeMessage('health', '');
+
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
