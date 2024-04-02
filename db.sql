@@ -21,6 +21,7 @@ CREATE TABLE orders (
     order_id INT AUTO_INCREMENT PRIMARY KEY,
     customer_id INT NOT NULL,
     order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+<<<<<<< HEAD
     total_amount DECIMAL(10, 2) NOT NULL,
    
 );
@@ -33,3 +34,7 @@ CREATE TABLE order_item (+
     FOREIGN KEY (order_id) REFERENCES orders(order_id),
     FOREIGN KEY (item_id) REFERENCES item(item_id)
 );
+=======
+    total_amount DECIMAL(10, 2) NOT NULL,   
+);
+>>>>>>> 0ca59e0a01d44d57da2be2f90e9d29ac9b106b02
