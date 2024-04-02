@@ -25,7 +25,7 @@ CREATE TABLE orders (
    
 );
 
-CREATE TABLE order_item (
+CREATE TABLE order_item (+
     order_item_id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
     item_id INT NOT NULL,
