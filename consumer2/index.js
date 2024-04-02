@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const port = 3001
+const port = 3002
 const amqp = require('amqplib');
 const RMQ_URL = 'amqp://localhost:5672/';
 
