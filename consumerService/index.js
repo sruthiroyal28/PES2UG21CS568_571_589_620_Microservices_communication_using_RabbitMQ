@@ -18,30 +18,30 @@ async function consumeMessage(exchange, routingKey){
     await channel.bindQueue(queue, exchange, routingKey);
 
     console.log(`Waiting for messages from exchange "${exchange}" with routing key "${routingKey}"...`);
-    let m;
     channel.consume(queue, (msg) => {
       if (msg) {
         const messageContent = msg.content.toString();
-        m = msg.content;
         console.log('Received message:', messageContent);
         channel.ack(msg);
       }
-    return m;
     });
   } catch(error){
     console.error('Error: ', error.message);
   }
 }
 
-app.get('/consumer1', (req, res) => {
-  const msg = consumeMessage('health', '');
-  res.json(msg);
-})
+// app.get('/consumer1', (req, res) => {
+//   const msg = consumeMessage('health', '');
+//   res.json(msg);
+// })
+//
+
 
 // app.get('/itemcreation', (req, res) => {
 //   consumeMessage('create', '');
 //   res.json("Consumer2 started consuming messages");
 // })
+consumeMessage('create', '');
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
