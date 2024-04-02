@@ -30,12 +30,6 @@ async function consumeMessage(exchange, routingKey){
   }
 }
 
-// app.get('/consumer1', (req, res) => {
-//   const msg = consumeMessage('health', '');
-//   res.json(msg);
-// })
-//
-
 
 consumeMessage('health', '');
 
