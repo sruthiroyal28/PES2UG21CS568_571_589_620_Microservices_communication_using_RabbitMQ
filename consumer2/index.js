@@ -8,7 +8,7 @@ const connection = mysql.createConnection({
   host: 'localhost',
   port:3306,
   user: 'root',
-  password: 'jacksonwang123$$',
+  password: '24982498',
   database: 'inventory'
 })
 
@@ -32,7 +32,7 @@ async function connect_to(msg)
   const sql = 'INSERT INTO orders (customer_id, order_date, total_amount) VALUES (?, ?, ?)';
 
 // Execute the query with placeholders
-  connection.query(sql, ["rama", "chandra", 1200], (err, results) => {
+  connection.query(sql, [customer, order, total_Amount], (err, results) => {
     if (err) {
       console.error('Error executing query:', err);
       return;
