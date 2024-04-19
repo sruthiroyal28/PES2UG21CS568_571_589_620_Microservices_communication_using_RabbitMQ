@@ -10,7 +10,7 @@ const connection = mysql.createConnection({
   host: 'localhost',
   port: 3306,
   user: 'root',
-  password: 'jacksonwang123$$',
+  password: '24982498',
   database: 'inventory'
 });
 
@@ -26,15 +26,16 @@ connection.connect(err => {
 // Function to handle read operations from the database
 async function handleReadOperation(msg) {
   const parsedData = JSON.parse(msg);
-  const itemId = parsedData.item_id;
+  const inventoryId = parsedData.inventory_id;
 
-  const sql = 'SELECT * FROM inventory WHERE item_id = ?';
+  const sql = 'SELECT inventory_id, item_name, item_description, price, quantity, location, last_updated, customer_id, order_date, total_amount FROM inventory WHERE inventory_id = ?';
 
-  connection.query(sql, [itemId], (err, results) => {
+  connection.query(sql, [inventoryId], (err, results) => {
     if (err) {
       console.error('Error executing query:', err);
       return;
     }
+
     console.log('Query results:', results);
   });
 }
