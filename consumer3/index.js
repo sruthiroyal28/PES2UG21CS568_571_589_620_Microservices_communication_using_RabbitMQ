@@ -8,66 +8,59 @@ const connection = mysql.createConnection({
   host: 'localhost',
   port: 3306,
   user: 'root',
-  password: 'jacksonwang123$$',
+  password: '24982498',
   database: 'inventory'
 });
 
-async function connect_to(msg) {
-  connection.connect((err) => {
-    if (err) {
-      console.error("Error connecting to the database");
-      return;
-    }
-    console.log('Successfully Connected to the database');
-  });
+// Connect to MySQL
+connection.connect(err => {
+  if (err) {
+    console.error("Error connecting to the database:", err);
+    return;
+  }
+  console.log('Successfully connected to the database');
+});
 
+// Function to handle delete operations from the database
+async function handleDeleteOperation(msg) {
   const parsedData = JSON.parse(msg);
+  const inventoryId = parsedData.inventory_id;
 
-  const item = parsedData.item_id;
+  const sql = 'DELETE FROM inventory WHERE inventory_id = ?';
 
-  const sql = 'DELETE FROM stock WHERE item_id = ?';
-
-  // Execute the query with placeholders
-  connection.query(sql, [item], (err, results) => {
+  connection.query(sql, [inventoryId], (err, result) => {
     if (err) {
       console.error('Error executing query:', err);
       return;
     }
-    console.log('Query results:', results);
-  });
 
-  connection.end((err) => {
-    if (err) {
-      console.error('Error closing connection:', err);
-      return;
+    if (result.affectedRows === 0) {
+      console.log('No rows were deleted. Inventory ID not found.');
+    } else {
+      console.log('Deleted', result.affectedRows, 'row(s).');
     }
-    console.log('Connection closed');
   });
 }
 
+// Function to consume messages
 async function consumeMessage(exchange, routingKey) {
   try {
-    // Connect to RabbitMQ server and retrieve the message 
-    const con = await amqp.connect(RMQ_URL);
-    const channel = await con.createChannel();
-
+    const conn = await amqp.connect(RMQ_URL);
+    const channel = await conn.createChannel();
     await channel.assertExchange(exchange, 'topic', { durable: false });
-
     const { queue } = await channel.assertQueue('', { exclusive: true });
-
     await channel.bindQueue(queue, exchange, routingKey);
 
     console.log(`Waiting for messages from exchange "${exchange}" with routing key "${routingKey}"...`);
-    channel.consume(queue, (msg) => {
+    channel.consume(queue, msg => {
       if (msg) {
-        const messageContent = msg.content.toString();
-        console.log('Received message:', messageContent);
+        console.log('Received message:', msg.content.toString());
         channel.ack(msg);
-        connect_to(messageContent);
+        handleDeleteOperation(msg.content.toString());
       }
     });
   } catch (error) {
-    console.error('Error: ', error.message);
+    console.error('Error:', error.message);
   }
 }
 
