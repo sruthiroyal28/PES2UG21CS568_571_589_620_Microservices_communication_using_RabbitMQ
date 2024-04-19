@@ -1,9 +1,9 @@
 const express = require('express');
 const app = express();
-const port = 3003;
+const port = 3010;
 const amqp = require('amqplib');
 const RMQ_URL = 'amqp://localhost:5672/';
-const mysql = require('mysql');
+const mysql = require('mysql2/promise');
 const connection = mysql.createConnection({
   host: 'localhost',
   port: 3306,
