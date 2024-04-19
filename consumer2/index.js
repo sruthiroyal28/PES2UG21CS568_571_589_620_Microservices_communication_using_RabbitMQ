@@ -3,13 +3,13 @@ const app = express()
 const port = 3002
 const amqp = require('amqplib');
 const RMQ_URL = 'amqp://localhost:5672/';
-const mysql = require('mysql')
+const mysql = require('mysql/promise')
 const connection = mysql.createConnection({
-  host: 'localhost',
-  port:3306,
-  user: 'root',
-  password: 'jacksonwang123$$',
-  database: 'inventory'
+  host: DB_HOST,
+  port: DB_PORT,
+  user: DB_USER,
+  password: DB_PASSWORD,
+  database:  DB_NAME
 })
 
 async function connect_to(msg)
