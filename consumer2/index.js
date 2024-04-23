@@ -5,11 +5,11 @@ const amqp = require('amqplib');
 const RMQ_URL = 'amqp://localhost:5672/';
 const mysql = require('mysql2/promise')
 const connection = mysql.createConnection({
-  host: DB_HOST,
-  port: DB_PORT,
-  user: DB_USER,
-  password: DB_PASSWORD,
-  database:  DB_NAME
+  host: 'localhost',
+  port:3306,
+  user: 'root',
+  password: 'jacksonwang123$$',
+  database: 'inventory'
 })
 
 async function connect_to(msg)
