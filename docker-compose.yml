@@ -1,0 +1,41 @@
+version: '3'
+services:
+  consumer1:
+    build:
+      context: ./consumer1
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+
+  consumer2:
+    build:
+      context: ./consumer2
+      dockerfile: Dockerfile
+    ports:
+      - "3009:3009"
+
+  consumer3:
+    build:
+      context: ./consumer3
+      dockerfile: Dockerfile
+    ports:
+      - "3010:3010"
+
+  consumer4:
+    build:
+      context: ./consumer4
+      dockerfile: Dockerfile
+    ports:
+      - "3012:3012"
+
+  producer:
+    build:
+      context: ./producer
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - consumer1
+      - consumer2
+      - consumer3
+      - consumer4
